@@ -61,7 +61,7 @@ class BinarySearchTree:
         if left_size > ind and self.left is not None:
             return self.left.select(ind)
         if left_size < ind and self.right is not None:
-            return self.right.select(ind)
+            return self.right.select(ind - left_size - 1) #my edit
         return None
 
 
@@ -91,15 +91,18 @@ class BinarySearchTree:
     def insert(self, key):
         if self.key is None:
             self.key = key
+            #defining self.size = 1 was included in the definition
         elif self.key > key: 
             if self.left is None:
                 self.left = BinarySearchTree(self.debugger)
+            self.size += 1
             self.left.insert(key)
         elif self.key < key:
             if self.right is None:
                 self.right = BinarySearchTree(self.debugger)
+            self.size += 1
             self.right.insert(key)
-        self.calculate_sizes()
+        #self.calculate_sizes()
         return self
 
     
@@ -127,7 +130,41 @@ class BinarySearchTree:
        11 
     '''
     def rotate(self, direction, child_side):
-        # Your code goes here
+        if (child_side == "L"):
+            if (self.left is None):
+                return self
+            if (direction == "L"):
+                if (self.left.right is None):
+                    return self
+                new_root = self.left.right
+                self.left.right = new_root.left
+                new_root.left = self.left
+                self.left = new_root
+            else: #direction == "R"
+                if (self.left.left is None):
+                    return self
+                new_root = self.left.left
+                self.left.left = new_root.right
+                new_root.right = self.left
+                self.left = new_root
+
+        else: #child_side == "R"
+            if (self.right is None):
+                return self
+            if (direction == "L"):
+                if (self.right.right is None):
+                    return self
+                new_root = self.right.right
+                self.right.right = new_root.left
+                new_root.left = self.right
+                self.right = new_root
+            else: #direction == "R"
+                if (self.right.left is None):
+                    return self
+                new_root = self.right.left
+                self.right.left = new_root.right
+                new_root.right = self.right
+                self.right = new_root
         return self
 
     def print_bst(self):
